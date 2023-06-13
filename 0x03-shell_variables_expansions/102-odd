@@ -1,2 +1,2 @@
 #!/bin/bash
-paste - - | cut -fl
+awk "NR % 2 == 1" < input.txt
