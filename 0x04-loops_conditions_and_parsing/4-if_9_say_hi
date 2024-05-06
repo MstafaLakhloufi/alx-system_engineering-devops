@@ -3,7 +3,7 @@
 
 counter=0
 
-while [$counter -lt 11 ][
+while [ $counter -lt 11 ]
 do
 	if [ $counter = 9 ]
 	then
