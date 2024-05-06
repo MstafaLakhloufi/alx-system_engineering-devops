@@ -11,6 +11,5 @@ do
 	else
 		echo "Best School"
 	fi
-	((counter++))
+	let COUNTER+=1
 done
-
