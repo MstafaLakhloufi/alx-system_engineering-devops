@@ -1,36 +1,36 @@
 #!/usr/bin/python3
 
 """
-Query a subreddit and return the number of
-total subscribers in that subredit
+query the Reddit API and prints the titles
+of the first 10 hot posts listed for a given subreddit.
 """
 
 from requests import get
 from sys import argv
 
 
-headers = {
-    "User-Agent": "Of course I had to use a custom User-Agent",
-    "X-Forwared-For": "iamthecavalry"
-}
-
-
-def number_of_subscribers(subreddit: str) -> int:
+def top_ten(subreddit: str) -> None:
     """
-    Query the subreddit and return the number of
-    Active subs. If its an invalid subredit, return 0
+    function that does the heavy lifting for us
+    Args:
+        subreddit (str) -> The subreddit to query
+    Returns: The top 10 hots for that subreddit
     """
-    response = get("https://www.reddit.com/r/{}/about.json".format(subreddit),
-                   headers=headers)
-    data = response.json()
+    headers = {
+        "User-Agent": "Marvel's Agents of Shield/21",
+        "X-Forwared-For": "Phil J. Coulson"
+    }
+
+    request_url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+
     try:
-        if 'error' in data.keys():
-            return 0
-        else:
-            return data['data']['subscribers']
-    except Exception as e:
-        return 0
+        response = get(request_url, headers=headers,
+                       allow_redirects=False).json()
+        data = response['data']['children']
+        [print(post['data']['title']) for post in data[:10]]
+    except Exception:
+        print("None")
 
 
 if __name__ == "__main__":
-    print(number_of_subscribers(argv[1]))
+    (top_ten(argv[1]))
