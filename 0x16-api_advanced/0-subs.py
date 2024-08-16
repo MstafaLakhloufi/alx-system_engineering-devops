@@ -1,33 +1,36 @@
 #!/usr/bin/python3
+
 """
-This module contains a function that queries the Reddit API to get
-the number of subscribers for a given subreddit.
+Query a subreddit and return the number of
+total subscribers in that subredit
 """
 
-import requests
+from requests import get
+from sys import argv
 
 
-def number_of_subscribers(subreddit):
+headers = {
+    "User-Agent": "Of course I had to use a custom User-Agent",
+    "X-Forwared-For": "iamthecavalry"
+}
+
+
+def number_of_subscribers(subreddit: str) -> int:
     """
-    Queries the Reddit API and returns the number of subscribers for a given
-    subreddit.
-    If an invalid subreddit is given, returns 0.
-
-    Args:
-        subreddit (str): The subreddit name to query.
-
-    Returns:
-        int: The number of subscribers, or 0 if the subreddit is invalid.
+    Query the subreddit and return the number of
+    Active subs. If its an invalid subredit, return 0
     """
-    url = f'https://www.reddit.com/r/{subreddit}/about.json'
-    headers = {'User-Agent': 'customUserAgent/0.1'}
-
+    response = get("https://www.reddit.com/r/{}/about.json".format(subreddit),
+                   headers=headers)
+    data = response.json()
     try:
-        response = requests.get(url, headers=headers, allow_redirects=False)
-        if response.status_code == 200:
-            data = response.json()
-            return data.get('data', {}).get('subscribers', 0)
-        else:
+        if 'error' in data.keys():
             return 0
-    except requests.RequestException:
+        else:
+            return data['data']['subscribers']
+    except Exception as e:
         return 0
+
+
+if __name__ == "__main__":
+    print(number_of_subscribers(argv[1]))
